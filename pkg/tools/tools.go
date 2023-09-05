@@ -3,18 +3,37 @@ package tools
 import (
 	"io"
 	"net/http"
+	"os"
 	"time"
+	"vacancies/pkg/logger"
 	"vacancies/pkg/telegram"
+
+	"github.com/joho/godotenv"
 )
 
-var PlatformHeaders = map[string]map[string]string{
+var HH_TOKEN, SUPERJOB_ID, SUPERJOB_TOKEN, SUPERJOB_SECRET string
+var PlatformHeaders map[string]map[string]string
+
+func init() {
+	err := godotenv.Load(".env")
+	CheckErr(err)
+
+	HH_TOKEN = os.Getenv("HH_TOKEN")
+	SUPERJOB_TOKEN = os.Getenv("SUPERJOB_TOKEN")
+	SUPERJOB_ID = os.Getenv("SUPERJOB_ID")
+	SUPERJOB_SECRET = os.Getenv("SUPERJOB_SECRET")
+	PlatformHeaders = map[string]map[string]string{
 	"headhunter": {
 		"User-Agent": "Mozilla/5.0 (iPad; CPU OS 7_2_1 like Mac OS X; en-US) AppleWebKit/533.14.6 (KHTML, like Gecko) Version/3.0.5 Mobile/8B116 Safari/6533.14.6",
-		// "Authorization": "Bearer " + os.Getenv("HEADHUNTER_TOKEN"),
-		"Authorization": "Bearer QQAVSIBVU4B0JCR296THKB22JP05A92H329U49TDD9CRIS8DT9BRPPT7M9OLQ6HD",
+		"Authorization": "Bearer " + HH_TOKEN,
+	},
+	"superjob": {
+		"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0)",
+		"Authorization": "Bearer " + SUPERJOB_TOKEN,
+		"X-Api-App-Id": SUPERJOB_SECRET,
 	},
 	"trudvsem": {},
-
+	}
 }
 
 
@@ -38,7 +57,7 @@ func CheckErr(err error) {
 		panic(err)
 	}
 }
-
+// TODO: Обработать случай, когда заканчивается срок действия токена Superjob 
 func GetJson(url string, platform string) (json string, err error) {
 	client := http.Client{
 		Timeout: 120 * time.Second,
@@ -53,6 +72,7 @@ func GetJson(url string, platform string) (json string, err error) {
 		}
 	}
 	response, err := client.Do(req)
+	logger.Log.Printf("GET JSON status: %d by address: %s", response.StatusCode, url)
 	if err != nil {
 		return
 	}

@@ -22,14 +22,14 @@ func (d *DB) SaveOneVacancy(v models.Vacancy) {
 	_, err := d.Connection.Exec(smt, v.Id, v.Url, v.Title, v.CityId, v.ProfessionId, v.ProfAreas, v.Specializations,
 		 v.Experience, v.SalaryFrom, v.SalaryTo, v.Skills, v.DateUpdate, v.Platform)
 	if err != nil {
-		logger.Log.Printf("Ошибка: Вакансия %d не была добавлена в базу - %s", v.Id, err)
+		logger.Log.Printf("Ошибка: Вакансия %s не была добавлена в базу - %s", v.Id, err)
 		err = tx.Commit()
 		tools.CheckErr(err)
 		return
 	}
 	err = tx.Commit()
 	tools.CheckErr(err)
-	logger.Log.Printf("Успех: Вакансия %s была добавлена в базу", v.Id)
+	logger.Log.Printf("Успешно сохранили вакансию %s", v.Id)
 }
 
 func (d *DB) SaveManyVacancies(vacancies []models.Vacancy) {
@@ -47,7 +47,7 @@ func (d *DB) SaveVacancies(vacancies []models.Vacancy) {
 	_, err := d.Connection.Exec(query, vals...)
 	tools.CheckErr(err)
 	tx.Commit()
-	logger.Log.Printf("Успех: Cохранили %d вакансий", len(vacancies))
+	logger.Log.Printf("Успешно сохранили %d вакансий", len(vacancies))
 }
 
 

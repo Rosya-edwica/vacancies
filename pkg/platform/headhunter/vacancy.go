@@ -39,7 +39,6 @@ func (api *HeadHunter) PutVacancyToArrayById(id string, wg *sync.WaitGroup, vaca
 	} else {
 		*vacancies = append(*vacancies, vacancy)
 	}
-	fmt.Println(vacancy.Url, vacancy.CityId, gjson.Get(json, "area.name").String())
 	return
 }
 

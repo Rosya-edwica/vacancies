@@ -1,7 +1,6 @@
 package headhunter
 
 import (
-	"fmt"
 	"net/url"
 	"strconv"
 	"vacancies/pkg/logger"
@@ -22,7 +21,6 @@ type HeadHunter struct {
 
 const (
 	TOKEN = "QQAVSIBVU4B0JCR296THKB22JP05A92H329U49TDD9CRIS8DT9BRPPT7M9OLQ6HD"
-	dictionaryUrl = "https://api.hh.ru/dictionaries"
 	per_page = "60"
 	search_field = "name"
 )
@@ -67,20 +65,4 @@ func (api *HeadHunter) convertSalaryToRUR(salary models.Salary) models.Salary {
 		}
 	}
 	return salary
-}
-
-func getCurrencies() (currencies []models.Currency) {
-	json, err := tools.GetJson(dictionaryUrl, "headhunter")
-	if err != nil {
-		fmt.Printf("Не удалось обновить валюту. Текст сообщения: %s", err)
-	}
-	for _, item := range gjson.Get(json, "currency").Array() {
-		currencies = append(currencies, models.Currency{
-			Code: item.Get("code").String(),
-			Abbr: item.Get("abbr").String(),
-			Name: item.Get("name").String(),
-			Rate: item.Get("rate").Float(),
-		})
-	}
-	return
 }
