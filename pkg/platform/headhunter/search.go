@@ -29,7 +29,9 @@ func (api *HeadHunter) CollectAllVacanciesByQuery(position models.Position, db *
 		vacancies = api.FindVacanciesInRussia()
 	} else {
 		for _, city := range api.Cities {
-			if city.HH_ID == 0 { continue }
+			if city.HH_ID == 0 {
+				continue
+			}
 			logger.Log.Printf("Ищем вакансии в городе:%s", city.Name)
 			cityVacancies := api.FindVacanciesInCurrentCity(city)
 			vacancies = append(vacancies, cityVacancies...)
@@ -51,7 +53,9 @@ func (api *HeadHunter) FindVacanciesInCurrentCity(city models.City) (vacancies [
 	for {
 		url := fmt.Sprintf("%s&page=%d", api.CreateQuery(), pageNum)
 		pageVacancies := api.CollectVacanciesFromPage(url)
-		if len(pageVacancies) == 0 { break }
+		if len(pageVacancies) == 0 {
+			break
+		}
 		pageNum++
 		logger.Log.Printf("Количество вакансий - %d на %d странице", len(pageVacancies), pageNum)
 		vacancies = append(vacancies, pageVacancies...)
@@ -73,6 +77,5 @@ func (api *HeadHunter) CollectVacanciesFromPage(url string) (vacancies []models.
 		go api.PutVacancyToArrayById(vacancyId, &wg, &vacancies)
 	}
 	wg.Wait()
-	fmt.Println(len(items), "=", len(vacancies))
 	return
 }
