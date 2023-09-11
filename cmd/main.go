@@ -11,9 +11,10 @@ import (
 	"vacancies/pkg/logger"
 	"vacancies/pkg/models"
 
+	"vacancies/pkg/platform/geekjob"
+	"vacancies/pkg/platform/headhunter"
 	"vacancies/pkg/platform/superjob"
 	"vacancies/pkg/platform/trudvsem"
-	"vacancies/pkg/platform/headhunter"
 	"vacancies/pkg/telegram"
 	"vacancies/pkg/tools"
 
@@ -27,22 +28,22 @@ var ERROR_MESSAGE = strings.Join([]string{
 	"\nОшибка: Запусти программу с дополнительными параметрами:",
 	"1. 'headhunter' OR 'superjob' OR 'trudvsem'  - для выбора платформы парсинга",
 	"2. 'area'- для парсинга по определенным профобластям, которые перечислены в файле prof_areas.txt (необязательно)",
-	}, "\n")
-
+}, "\n")
 
 func main() {
 	startTime := time.Now().Unix()
 	initSettings()
 	db := initDatabase()
 	defer db.Close()
-	
+
 	positions := getPositions(db)
 	positionsCount := len(positions)
 	for i, position := range positions {
-		logger.Log.Printf("Профессия № %d:%s (Осталось: %d)", position.Id, position.Name, positionsCount - i+1)
+		logger.Log.Printf("Профессия № %d:%s (Осталось: %d)", position.Id, position.Name, positionsCount-i+1)
 		findPositionVacancies(position, db)
+		break
 	}
-	telegram.SuccessMessageMailing(fmt.Sprintf("Программа завершилась за %d секунд.", time.Now().Unix() - startTime))
+	telegram.SuccessMessageMailing(fmt.Sprintf("Программа завершилась за %d секунд.", time.Now().Unix()-startTime))
 
 }
 
@@ -52,11 +53,10 @@ func findPositionVacancies(position models.Position, db *database.DB) {
 	for _, name := range tools.UniqueNames(professionNames) {
 		position.Name = name
 		vacancies := API.CollectAllVacanciesByQuery(position, db)
-		fmt.Println(len(vacancies))
+		fmt.Println(fmt.Sprintf("Количество вакансий для %s:%d", position.Name, len(vacancies)))
 		db.SaveManyVacancies(vacancies)
 	}
 }
-
 
 func initDatabase() (db *database.DB) {
 	err := godotenv.Load(".env")
@@ -80,10 +80,16 @@ func initSettings() {
 		panic(ERROR_MESSAGE)
 	}
 	switch sysArgs[1] {
-		case "trudvsem" : API = &trudvsem.TrudVsem{}
-		case "superjob" : API = &superjob.Superjob{}
-		case "headhunter" : API = &headhunter.HeadHunter{}
-		default: panic(ERROR_MESSAGE)
+	case "trudvsem":
+		API = &trudvsem.TrudVsem{}
+	case "superjob":
+		API = &superjob.Superjob{}
+	case "headhunter":
+		API = &headhunter.HeadHunter{}
+	case "geekjob":
+		API = &geekjob.GeekJob{}
+	default:
+		panic(ERROR_MESSAGE)
 	}
 	if len(sysArgs) == 3 && sysArgs[2] == "area" {
 		PARSING_BY_AREA = true
