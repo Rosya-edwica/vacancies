@@ -41,7 +41,6 @@ func main() {
 	for i, position := range positions {
 		logger.Log.Printf("Профессия № %d:%s (Осталось: %d)", position.Id, position.Name, positionsCount-i+1)
 		findPositionVacancies(position, db)
-		break
 	}
 	telegram.SuccessMessageMailing(fmt.Sprintf("Программа завершилась за %d секунд.", time.Now().Unix()-startTime))
 
