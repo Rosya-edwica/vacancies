@@ -1,7 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -23,10 +25,10 @@ import (
 
 var API api.API
 var PARSING_BY_AREA bool
-
+var PLATFORM string
 var ERROR_MESSAGE = strings.Join([]string{
 	"\nОшибка: Запусти программу с дополнительными параметрами:",
-	"1. 'headhunter' OR 'superjob' OR 'trudvsem'  - для выбора платформы парсинга",
+	"1. 'headhunter' OR 'superjob' OR 'trudvsem' OR 'geekjob'  - для выбора платформы парсинга",
 	"2. 'area'- для парсинга по определенным профобластям, которые перечислены в файле prof_areas.txt (необязательно)",
 }, "\n")
 
@@ -39,7 +41,8 @@ func main() {
 	positions := getPositions(db)
 	positionsCount := len(positions)
 	for i, position := range positions {
-		logger.Log.Printf("Профессия № %d:%s (Осталось: %d)", position.Id, position.Name, positionsCount-i+1)
+		logger.Log.Printf("[%s] Профессия № %d: %s (Осталось: %d)", PLATFORM, position.Id, position.Name, positionsCount-i+1)
+		log.Printf("[%s] Профессия № %d: %s (Осталось: %d)", PLATFORM, position.Id, position.Name, positionsCount-i+1)
 		findPositionVacancies(position, db)
 	}
 	telegram.SuccessMessageMailing(fmt.Sprintf("Программа завершилась за %d секунд.", time.Now().Unix()-startTime))
@@ -52,7 +55,7 @@ func findPositionVacancies(position models.Position, db *database.DB) {
 	for _, name := range tools.UniqueNames(professionNames) {
 		position.Name = name
 		vacancies := API.CollectAllVacanciesByQuery(position, db)
-		fmt.Println(fmt.Sprintf("Количество вакансий для %s:%d", position.Name, len(vacancies)))
+		logger.Log.Printf("[%s] Количество вакансий для %s:%d\n", PLATFORM, position.Name, len(vacancies))
 		db.SaveManyVacancies(vacancies)
 	}
 }
@@ -60,7 +63,7 @@ func findPositionVacancies(position models.Position, db *database.DB) {
 func initDatabase() (db *database.DB) {
 	err := godotenv.Load(".env")
 	if err != nil {
-		panic("Создай файл с переменными окружениями .env!")
+		tools.CheckErr(errors.New("Создай файл с переменными окружениями"))
 	}
 	db = &database.DB{
 		Host: os.Getenv("MYSQL_HOST"),
@@ -78,7 +81,8 @@ func initSettings() {
 	if len(sysArgs) < 2 {
 		panic(ERROR_MESSAGE)
 	}
-	switch sysArgs[1] {
+	PLATFORM = sysArgs[1]
+	switch PLATFORM {
 	case "trudvsem":
 		API = &trudvsem.TrudVsem{}
 	case "superjob":

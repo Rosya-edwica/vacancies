@@ -12,7 +12,9 @@ import (
 const token = "6105028983:AAG5qYpp0KKkhBiyOHri6MmB5e_UVzfC9pU"
 
 var chats = []string{
-	"544490770",
+	"544490770",  // Ярослав
+	"1487312575", // Гриша
+	"941543716",  // Дима
 }
 
 func getJson(url string) (json string, err error) {
