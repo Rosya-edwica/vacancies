@@ -2,56 +2,55 @@ package superjob
 
 import (
 	"fmt"
-	"strings"
+	// "strings"
 	"sync"
 	"time"
-	"vacancies/pkg/logger"
+	// "vacancies/pkg/logger"
 	"vacancies/pkg/models"
-	"vacancies/pkg/tools"
+	// "vacancies/pkg/tools"
 
 	"github.com/tidwall/gjson"
 )
 
+// func (api *Superjob) CollectVacanciesFromPage(url string) (vacancies []models.Vacancy) {
+// 	json, err := tools.GetJson(url, "superjob")
+// 	if err != nil {
+// 		if err.Error() == "Limit is over" {
+// 			time.Sleep(time.Second * 3)
+// 			json, err = tools.GetJson(url, "superjob")
+// 		} else {
+// 			logger.Log.Printf("ОШИБКА: %s", err.Error())
+// 			return
+// 		}
+// 	}
+// 	for _, item := range gjson.Get(json, "objects").Array() {
+// 		var vacancy models.Vacancy
+// 		salary := api.getSalary(item)
 
-func (api *Superjob) CollectVacanciesFromPage(url string) (vacancies []models.Vacancy) {
-	json, err := tools.GetJson(url, "superjob")
-	if err != nil {
-		if err.Error() == "Limit is over" {
-			time.Sleep(time.Second * 3)
-			json, err = tools.GetJson(url, "superjob")
-		} else {
-			logger.Log.Printf("ОШИБКА: %s", err.Error())
-			return
-		}
-	}
-	for _, item := range gjson.Get(json, "objects").Array() {
-		var vacancy models.Vacancy
-		salary := api.getSalary(item)
-		
-		if api.CityEdwicaId != 0 {
-			vacancy.CityId = api.CityEdwicaId
-		} else {
-			vacancy.CityId = api.getEdwicaCityID(item)
-		}
-		vacancy.Id = item.Get("id").String()
-		vacancy.Platform = "superjob"
-		vacancy.ProfessionId = api.PositionId
-		vacancy.Title = item.Get("profession").String()
-		vacancy.SalaryFrom = salary.From
-		vacancy.SalaryTo = salary.To
-		vacancy.Url = item.Get("link").String()
-		vacancy.ProfAreas = strings.Join(getProfAreas(item), "|")
-		vacancy.Specializations = strings.Join(getSpecs(item), "|")
-		vacancy.Experience = convertExperienceId(int(item.Get("experience.id").Int()))
-		vacancy.DateUpdate = convertDateUpdate(item.Get("date_published").Int())
-		if vacancy.CityId == 0 {
-			logger.Log.Printf("Ошибка: Вакансия %s не была добавлена в базу, т.к города '%s' в базе Эдвики нет", vacancy.Id, gjson.Get(json, "address").String())
-		} else {
-			vacancies = append(vacancies, vacancy)
-		}
-	}
-	return
-}
+// 		if api.CityEdwicaId != 0 {
+// 			vacancy.CityId = api.CityEdwicaId
+// 			// } else {
+// 			// vacancy.CityId = api.getEdwicaCityID(item)
+// 		}
+// 		vacancy.Id = item.Get("id").String()
+// 		vacancy.Platform = "superjob"
+// 		vacancy.ProfessionId = api.PositionId
+// 		vacancy.Title = item.Get("profession").String()
+// 		vacancy.SalaryFrom = salary.From
+// 		vacancy.SalaryTo = salary.To
+// 		vacancy.Url = item.Get("link").String()
+// 		vacancy.ProfAreas = strings.Join(getProfAreas(item), "|")
+// 		vacancy.Specializations = strings.Join(getSpecs(item), "|")
+// 		vacancy.Experience = convertExperienceId(int(item.Get("experience.id").Int()))
+// 		vacancy.DateUpdate = convertDateUpdate(item.Get("date_published").Int())
+// 		if vacancy.CityId == 0 {
+// 			logger.Log.Printf("Ошибка: Вакансия %s не была добавлена в базу, т.к города '%s' в базе Эдвики нет", vacancy.Id, gjson.Get(json, "address").String())
+// 		} else {
+// 			vacancies = append(vacancies, vacancy)
+// 		}
+// 	}
+// 	return
+// }
 
 func (api *Superjob) PutVacancyToArrayById(id string, wg *sync.WaitGroup, vacancies *[]models.Vacancy) {
 	return
@@ -122,8 +121,7 @@ func (api *Superjob) convertSalaryToRUR(salary models.Salary) (convertedSalary m
 	return
 }
 
-func (api *Superjob) getEdwicaCityID(json gjson.Result) (id int) {
-	superjobId := int(json.Get("town.id").Int())
+func (api *Superjob) getEdwicaCityID(superjobId int) (id int) {
 	for _, city := range api.Cities {
 		if city.SUPERJOB_ID == superjobId {
 			return city.EDWICA_ID

@@ -57,6 +57,17 @@ func (api *HeadHunter) getSalary(json string) (salary models.Salary) {
 	}
 }
 
+func (api *HeadHunter) convertSalary(salary models.Salary) models.Salary {
+	switch salary.Currency {
+	case "RUR":
+		return salary
+	case "":
+		return models.Salary{}
+	default:
+		return api.convertSalaryToRUR(salary)
+	}
+}
+
 func (api *HeadHunter) getEdwicaCityID(hhId int) (edwicaId int) {
 	for _, city := range api.Cities {
 		if city.HH_ID == hhId {

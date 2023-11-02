@@ -27,7 +27,6 @@ func (d *DB) GetPositionsByArea(areaList []string) (positions []models.Position)
 	return d.getPositions(query)
 }
 
-
 func (d *DB) GetAllPositions() (positions []models.Position) {
 	query := `
 		SELECT id, name, other_names
@@ -37,15 +36,21 @@ func (d *DB) GetAllPositions() (positions []models.Position) {
 	return d.getPositions(query)
 }
 
+func (d *DB) GetNewPositions() (positions []models.Position) {
+	query := "SELECT id, name, other_names FROM position WHERE id >= 17178"
+	logger.Log.Println("Парсим новые профессии (придуманные GPT)")
+	return d.getPositions(query)
+}
+
 func (d *DB) getPositions(query string) (positions []models.Position) {
 	rows, err := d.Connection.Query(query)
 	tools.CheckErr(err)
 	defer rows.Close()
 	for rows.Next() {
 		var (
-			name string
+			name  string
 			other sql.NullString
-			id int
+			id    int
 		)
 		err = rows.Scan(&id, &name, &other)
 		tools.CheckErr(err)

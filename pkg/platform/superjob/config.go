@@ -17,10 +17,36 @@ type Superjob struct {
 	PositionId   int
 	CityId       int
 	CityEdwicaId int
-	Cities 	[]models.City
-	Currencies 	[]models.Currency
+	Cities       []models.City
+	Currencies   []models.Currency
 }
 
+type SuperJobResponse struct {
+	Items []struct {
+		Id          int    `json:"id"`
+		SalaryFrom  int    `json:"payment_from"`
+		SalaryTo    int    `json:"payment_to"`
+		Currency    string `json:"currency"`
+		PublishedAt int64  `json:"date_published"`
+		Name        string `json:"profession"`
+		Url         string `json:"link"`
+		Experience  struct {
+			Id int `json:"id"`
+		} `json:"experience"`
+
+		City struct {
+			Id   int    `json:"id"`
+			Name string `json:"title"`
+		} `json:"town"`
+
+		ProfAreas []struct {
+			Name            string `json:"title"`
+			Specializations []struct {
+				Name string `json:"title"`
+			} `json:"positions"`
+		} `json:"catalogues"`
+	} `json:"objects"`
+}
 
 func (api *Superjob) CreateQuery() (query string) {
 	params := url.Values{
@@ -36,15 +62,14 @@ func (api *Superjob) CreateQuery() (query string) {
 	return "https://api.superjob.ru/2.0/vacancies?" + params.Encode()
 }
 
-
 // FIXME: НЕ работает. Не получается обновить .env
 func (api *Superjob) UpdateAccessToken() (token string) {
 	params := url.Values{
 		"refresh_token": {tools.SUPERJOB_TOKEN},
-		"client_id": {tools.SUPERJOB_ID},
+		"client_id":     {tools.SUPERJOB_ID},
 		"client_secret": {tools.SUPERJOB_SECRET},
 	}
-	json, err := tools.GetJson("https://api.superjob.ru/2.0/oauth2/refresh_token?" + params.Encode(), "superjob")
+	json, err := tools.GetJson("https://api.superjob.ru/2.0/oauth2/refresh_token?"+params.Encode(), "superjob")
 	tools.CheckErr(err)
 	token = gjson.Get(json, "access_token").String()
 	tools.SUPERJOB_TOKEN = token
@@ -63,4 +88,3 @@ func (api *Superjob) CountVacanciesByQuery(url string) (count int) {
 	logger.Log.Printf("Нашлось %d вакансий для профессии '%s'", count, api.PositionName)
 	return
 }
-

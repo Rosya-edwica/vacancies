@@ -105,7 +105,7 @@ func getPositions(db *database.DB) (positions []models.Position) {
 		areas := db.GetProfAreasFromFile("prof_areas.txt")
 		positions = db.GetPositionsByArea(areas)
 	} else {
-		positions = db.GetAllPositions()
+		positions = db.GetNewPositions()
 	}
 	return
 }
