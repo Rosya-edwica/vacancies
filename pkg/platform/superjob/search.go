@@ -99,6 +99,7 @@ func (api *Superjob) CollectVacanciesFromPage(url string) (vacancies []models.Va
 			ProfAreas:       strings.Join(profAreas, "|"),
 			Specializations: strings.Join(specs, "|"),
 		}
+		vacancies = append(vacancies, vacancy)
 
 	}
 	return
@@ -109,7 +110,7 @@ func (api *Superjob) decodeSuperjobResponse(url string) SuperJobResponse {
 	client := http.Client{
 		Timeout: 30 * time.Second,
 	}
-	req, err := http.NewRequest("POST", url, nil)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		panic(err)
 	}

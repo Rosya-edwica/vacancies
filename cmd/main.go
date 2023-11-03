@@ -55,6 +55,7 @@ func findPositionVacancies(position models.Position, db *database.DB) {
 	for _, name := range tools.UniqueNames(professionNames) {
 		position.Name = name
 		vacancies := API.CollectAllVacanciesByQuery(position, db)
+		fmt.Println("Найдено:", len(vacancies))
 		logger.Log.Printf("[%s] Количество вакансий для %s:%d\n", PLATFORM, position.Name, len(vacancies))
 		db.SaveManyVacancies(vacancies)
 	}
