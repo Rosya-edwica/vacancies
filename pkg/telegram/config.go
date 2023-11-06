@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"time"
 
 	"vacancies/pkg/logger"
-)
 
-const token = "6105028983:AAG5qYpp0KKkhBiyOHri6MmB5e_UVzfC9pU"
+	"github.com/joho/godotenv"
+)
 
 var chats = []string{
 	"544490770",  // Ярослав
@@ -45,5 +46,7 @@ func checkErr(err error) {
 }
 
 func getUrl() string {
-	return fmt.Sprintf("https://api.telegram.org/bot%s", token)
+	err := godotenv.Load(".env")
+	checkErr(err)
+	return fmt.Sprintf("https://api.telegram.org/bot%s", os.Getenv("TELEGRAM_TOKEN"))
 }

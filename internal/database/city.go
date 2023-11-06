@@ -15,15 +15,15 @@ func (d *DB) GetCities() (cities []models.City) {
 
 	for rows.Next() {
 		var name string
-		var edwica_id, superjob_id, hh_id int
+		var edwicaId, superjobId, hhId int
 
-		err = rows.Scan(&edwica_id, &superjob_id, &hh_id, &name)
+		err = rows.Scan(&edwicaId, &superjobId, &hhId, &name)
 		checkErr(err)
 		cities = append(cities, models.City{
 			Name:        name,
-			HH_ID:       hh_id,
-			EDWICA_ID:   edwica_id,
-			SUPERJOB_ID: superjob_id,
+			HH_ID:       hhId,
+			EDWICA_ID:   edwicaId,
+			SUPERJOB_ID: superjobId,
 		})
 	}
 	return
