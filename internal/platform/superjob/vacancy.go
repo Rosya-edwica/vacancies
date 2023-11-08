@@ -17,7 +17,7 @@ func (api *Superjob) PutVacancyToArrayById(id string, wg *sync.WaitGroup, vacanc
 
 func (api *Superjob) CollectVacanciesFromPage(url string) (vacancies []models.Vacancy) {
 	resp, statusCode := apiJson.DecondeJsonResponse(url, api.Headers, &apiJson.SuperJobResponse{})
-	fmt.Println(statusCode, "url")
+	fmt.Println(statusCode, url)
 	vacanciesResp := resp.(*apiJson.SuperJobResponse)
 	for _, item := range vacanciesResp.Items {
 		var vacancy models.Vacancy

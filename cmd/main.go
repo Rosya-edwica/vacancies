@@ -56,7 +56,6 @@ func findPositionVacancies(position models.Position, db *database.DB) {
 		position.Name = name
 		vacancies := API.CollectAllVacanciesByQuery(position)
 		db.SaveManyVacancies(vacancies)
-		break
 	}
 }
 
