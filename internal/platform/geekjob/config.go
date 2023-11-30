@@ -30,7 +30,7 @@ func (api *GeekJob) CreateQuery() (query string) {
 }
 
 func (api *GeekJob) CountVacanciesByQuery(url string) (count int) {
-	resp, _ := apiJson.DecondeJsonResponse(url, nil, &apiJson.GeekJobResponseFound{})
+	resp, _ := apiJson.DecondeJsonResponse(url, "GET", nil, &apiJson.GeekJobResponseFound{})
 	found := resp.(*apiJson.GeekJobResponseFound)
 	logger.Log.Printf("Нашлось %d вакансий для профессии '%s'", found.CountVacancies, api.PositionName)
 	return found.CountVacancies

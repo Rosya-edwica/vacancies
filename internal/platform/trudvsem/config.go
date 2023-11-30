@@ -25,7 +25,7 @@ func (api *TrudVsem) CreateQuery() (query string) {
 }
 
 func (api *TrudVsem) CountVacanciesByQuery(url string) (count int) {
-	resp, _ := apiJson.DecondeJsonResponse(url, nil, &apiJson.TrudvsemResponseFound{})
+	resp, _ := apiJson.DecondeJsonResponse(url, "GET", nil, &apiJson.TrudvsemResponseFound{})
 	found := resp.(*apiJson.TrudvsemResponseFound)
 	logger.Log.Printf("Нашлось %d вакансий для профессии '%s'", found.Meta.VacanciesCount, api.PositionName)
 	if found != nil {

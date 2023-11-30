@@ -63,7 +63,7 @@ func (api *HeadHunter) FindVacanciesInCurrentCity(city models.City) (vacancies [
 // Переходим по всем ссылкам на вакансии и парсим их из списка вакансий
 func (api *HeadHunter) CollectVacanciesFromPage(url string) (vacancies []models.Vacancy) {
 	// Декодируем json-ответ headhunter в виде списка вакансий
-	respData, _ := apiJson.DecondeJsonResponse(url, api.Headers, &apiJson.HeadHunterResponse{})
+	respData, _ := apiJson.DecondeJsonResponse(url, "GET", api.Headers, &apiJson.HeadHunterResponse{})
 	resp := respData.(*apiJson.HeadHunterResponse)
 
 	// Формируем список из id вакансий. Чтобы передать их горутинам

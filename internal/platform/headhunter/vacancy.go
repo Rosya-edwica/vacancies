@@ -15,7 +15,7 @@ func (api *HeadHunter) PutVacancyToArrayById(id string, wg *sync.WaitGroup, vaca
 	vacancyUrl := fmt.Sprintf("http://api.hh.ru/vacancies/%s", id)
 
 	// Декодируем json-ответ headhunter в виде подробной информации о вакансии
-	resp, _ := apiJson.DecondeJsonResponse(vacancyUrl, api.Headers, &apiJson.HeadHunterVacancyResponse{})
+	resp, _ := apiJson.DecondeJsonResponse(vacancyUrl, "GET", api.Headers, &apiJson.HeadHunterVacancyResponse{})
 	vacancyResp := resp.(*apiJson.HeadHunterVacancyResponse)
 	vacancy := api.steamUpHeadHunterVacancyResponse(vacancyResp)
 	*vacancies = append(*vacancies, vacancy)

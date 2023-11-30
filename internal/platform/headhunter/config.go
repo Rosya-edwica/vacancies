@@ -57,7 +57,7 @@ func (api *HeadHunter) CreateQuery() (query string) {
 
 // Подсчитываем количество вакансий, нам это нужно для того, чтобы понять искать по всей России или по отдельным городам
 func (api *HeadHunter) CountVacanciesByQuery(url string) (count int) {
-	resp, _ := apiJson.DecondeJsonResponse(url, api.Headers, &apiJson.HeadHunterResponseFound{})
+	resp, _ := apiJson.DecondeJsonResponse(url, "GET", api.Headers, &apiJson.HeadHunterResponseFound{})
 	found := resp.(*apiJson.HeadHunterResponseFound)
 	logger.Log.Printf("Нашлось %d вакансий для профессии '%s'", found.CountVacancies, api.PositionName)
 	if found != nil {

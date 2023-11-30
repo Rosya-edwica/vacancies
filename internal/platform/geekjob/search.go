@@ -48,7 +48,7 @@ func (api *GeekJob) CollectVacanciesFromPage(url string) (vacancies []models.Vac
 }
 
 func (api *GeekJob) collectVacanciesIdFromPage(url string) (ids []string) {
-	resp, _ := apiJson.DecondeJsonResponse(url, nil, &apiJson.GeekJobResponse{})
+	resp, _ := apiJson.DecondeJsonResponse(url, "GET", nil, &apiJson.GeekJobResponse{})
 	data := resp.(*apiJson.GeekJobResponse)
 	for _, vacancy := range data.Items {
 		ids = append(ids, vacancy.Id)

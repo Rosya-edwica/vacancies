@@ -40,7 +40,7 @@ func (api *Superjob) CreateQuery() (query string) {
 func (api *Superjob) UpdateAccessToken() (token string) {
 	fmt.Println("Пытаемся обновить токен superjob")
 	url := api.createQueryToUpdateToken()
-	resp, statusCode := apiJson.DecondeJsonResponse(url, nil, &apiJson.SuperJobResponseAccessToken{})
+	resp, statusCode := apiJson.DecondeJsonResponse(url, "POST", nil, &apiJson.SuperJobResponseAccessToken{})
 	if statusCode != 200 {
 		panic("Проблема с токеном Superjob")
 	}
@@ -54,7 +54,7 @@ func (api *Superjob) UpdateAccessToken() (token string) {
 }
 
 func (api *Superjob) CountVacanciesByQuery(url string) (count int) {
-	resp, statusCode := apiJson.DecondeJsonResponse(url, api.Headers, &apiJson.SuperJobResponseFound{})
+	resp, statusCode := apiJson.DecondeJsonResponse(url, "GET", api.Headers, &apiJson.SuperJobResponseFound{})
 	if statusCode == 410 {
 		newToken := api.UpdateAccessToken()
 		api.Headers["Authorization"] = fmt.Sprintf("Bearer %s", newToken)

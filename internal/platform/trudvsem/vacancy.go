@@ -9,7 +9,7 @@ import (
 )
 
 func (api *TrudVsem) CollectVacanciesFromPage(url string) (vacancies []models.Vacancy) {
-	resp, _ := apiJson.DecondeJsonResponse(url, api.Headers, &apiJson.TrudvsemResponse{})
+	resp, _ := apiJson.DecondeJsonResponse(url, "GET", api.Headers, &apiJson.TrudvsemResponse{})
 	trudResp := resp.(*apiJson.TrudvsemResponse)
 	for _, item := range trudResp.Results.Vacancies {
 		var (

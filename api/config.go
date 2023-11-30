@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"strings"
 
 	"net/http"
 	"sync"
@@ -35,12 +36,12 @@ type API interface {
 type AnyJsonResponseStruct interface{}
 
 // Парсим Json в структуру, которую передают в dataStruct
-func DecondeJsonResponse(url string, headers map[string]string, dataStruct interface{}) (data interface{}, statusCode int) {
+func DecondeJsonResponse(url, method string, headers map[string]string, dataStruct interface{}) (data interface{}, statusCode int) {
 	client := &http.Client{
 		Timeout: 30 * time.Second,
 	}
 
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest(strings.ToUpper(method), url, nil)
 	if err != nil {
 		panic(err)
 	}

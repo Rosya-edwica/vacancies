@@ -29,7 +29,7 @@ func CheckErr(err error) {
 }
 
 func CollectCurrencies() (currencies []models.Currency) {
-	resp, _ := apiJson.DecondeJsonResponse("https://api.hh.ru/dictionaries", nil, &apiJson.HeadHunterResponseCurrency{})
+	resp, _ := apiJson.DecondeJsonResponse("https://api.hh.ru/dictionaries", "GET", nil, &apiJson.HeadHunterResponseCurrency{})
 	data := resp.(*apiJson.HeadHunterResponseCurrency)
 	for _, currency := range data.Items {
 		currencies = append(currencies, models.Currency{
