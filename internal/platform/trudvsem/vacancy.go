@@ -12,7 +12,13 @@ func (api *TrudVsem) CollectVacanciesFromPage(url string) (vacancies []models.Va
 	resp, _ := apiJson.DecondeJsonResponse(url, api.Headers, &apiJson.TrudvsemResponse{})
 	trudResp := resp.(*apiJson.TrudvsemResponse)
 	for _, item := range trudResp.Results.Vacancies {
-		var vacancy models.Vacancy
+		var (
+			vacancy  models.Vacancy
+			cityName string
+		)
+		if len(item.Vacancy.Addressses.Address) > 0 {
+			cityName = item.Vacancy.Addressses.Address[0].Location
+		}
 
 		vacancy.Platform = "trudvsem"
 		vacancy.ProfessionId = api.PositionId
@@ -23,7 +29,7 @@ func (api *TrudVsem) CollectVacanciesFromPage(url string) (vacancies []models.Va
 		vacancy.SalaryFrom = float64(item.Vacancy.SalaryFrom)
 		vacancy.SalaryTo = float64(item.Vacancy.SalaryTo)
 		vacancy.Specializations = item.Vacancy.Specialisation.Name
-		vacancy.CityId = api.parseCity(item.Vacancy.Addressses.Address[0].Location)
+		vacancy.CityId = api.parseCity(cityName)
 
 		vacancies = append(vacancies, vacancy)
 	}
